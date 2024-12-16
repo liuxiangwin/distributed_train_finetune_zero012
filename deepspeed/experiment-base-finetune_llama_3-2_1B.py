@@ -7,9 +7,15 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers import TrainingArguments, Trainer
 import torch
 
-dataset_source = "timdettmers/openassistant-guanaco"
-dataset = load_dataset(dataset_source)
+# from huggingface_hub import login
+# login(
+#   token="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", # ADD YOUR TOKEN HERE
+# )
 
+
+# dataset_source = "timdettmers/openassistant-guanaco"
+# dataset = load_dataset(dataset_source)
+dataset = load_dataset("timdettmers/openassistant-guanaco")
 base_model = "meta-llama/Llama-3.2-1B-Instruct"
 
 tokenizer = AutoTokenizer.from_pretrained(base_model)

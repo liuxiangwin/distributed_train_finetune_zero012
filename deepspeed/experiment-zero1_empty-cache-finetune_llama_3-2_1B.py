@@ -116,15 +116,25 @@ def tokenize_function(examples):
 
 tokenized_dataset = dataset.map(tokenize_function, batched=True)
 
-## Change-6 Enable Deepspeed Zero-1
-trainer = TrainerMemoryMonitor(
+trainer = Trainer(
     model, args,
     train_dataset=tokenized_dataset['train'],
     eval_dataset=tokenized_dataset['test'],
     tokenizer=tokenizer,
 )
-
 trainer.train()
+
+
+
+## Change-6 Enable Deepspeed Zero-1
+# trainer = TrainerMemoryMonitor(
+#     model, args,
+#     train_dataset=tokenized_dataset['train'],
+#     eval_dataset=tokenized_dataset['test'],
+#     tokenizer=tokenizer,
+# )
+
+# trainer.train()
 
 
 # RESULT

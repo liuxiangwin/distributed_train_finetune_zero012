@@ -49,6 +49,7 @@ dataset = load_dataset(dataset_source)
 
 
 base_model = "meta-llama/Llama-3.2-3B-Instruct"
+# base_model = "meta-llama/Llama-3.1-8B"
 
 tokenizer = AutoTokenizer.from_pretrained(base_model)
 ## Change-1 
@@ -69,7 +70,7 @@ print("**attn_implementation=",attn_implementation)
 print("-------------------------")
 
 ## default
-3model = AutoModelForCausalLM.from_pretrained(base_model)
+model = AutoModelForCausalLM.from_pretrained(base_model)
 
 ## use flash attention -- running 3 python tasks
 model = AutoModelForCausalLM.from_pretrained(base_model, 
@@ -94,7 +95,7 @@ args = TrainingArguments(
     num_train_epochs=2,    
     
     ## Change-5 Enable Deepspeed Zero-3
-    deepspeed="ds_config3.json",
+    deepspeed="./ds_config3.json",
     # {
     #     "train_micro_batch_size_per_gpu": "auto",
     #     "zero_optimization": {
@@ -128,7 +129,7 @@ args = TrainingArguments(
 
 def tokenize_function(examples):
     ## Change-4 remove max_length from 2048 to 1024   
-    MAX_LENGTH=2048
+    MAX_LENGTH=1024
     tokenized = tokenizer(examples["text"], truncation=True, padding="max_length", max_length=MAX_LENGTH)
     tokenized["labels"] = tokenized["input_ids"][:]
     return tokenized
@@ -136,11 +137,19 @@ def tokenize_function(examples):
 
 tokenized_dataset = dataset.map(tokenize_function, batched=True)
 
-trainer = TrainerMemoryMonitor(
+trainer = Trainer(
     model, args,
     train_dataset=tokenized_dataset['train'],
     eval_dataset=tokenized_dataset['test'],
     tokenizer=tokenizer,
 )
-
 trainer.train()
+
+# trainer = TrainerMemoryMonitor(
+#     model, args,
+#     train_dataset=tokenized_dataset['train'],
+#     eval_dataset=tokenized_dataset['test'],
+#     tokenizer=tokenizer,
+# )
+
+# trainer.train()

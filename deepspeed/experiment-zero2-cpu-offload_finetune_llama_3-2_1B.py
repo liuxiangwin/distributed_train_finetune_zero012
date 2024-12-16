@@ -131,11 +131,19 @@ def tokenize_function(examples):
 
 tokenized_dataset = dataset.map(tokenize_function, batched=True)
 
-trainer = TrainerMemoryMonitor(
+trainer = Trainer(
     model, args,
     train_dataset=tokenized_dataset['train'],
     eval_dataset=tokenized_dataset['test'],
     tokenizer=tokenizer,
 )
-
 trainer.train()
+
+# trainer = TrainerMemoryMonitor(
+#     model, args,
+#     train_dataset=tokenized_dataset['train'],
+#     eval_dataset=tokenized_dataset['test'],
+#     tokenizer=tokenizer,
+# )
+
+# trainer.train()
